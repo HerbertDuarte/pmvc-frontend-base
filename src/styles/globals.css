@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.cti-input {
+    @apply bg-slate-100 px-4 rounded;
+}

@@ -1,13 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { tabRoutes } from './routes/tabRoutes';
-import { perfilRoutes } from './routes/perfilRoutes';
-
 import { useAuthStore } from '../store/auth/authStore';
+import { routes } from './routes';
 
 export const buildRouter = () => {
     const router = createRouter({
         scrollBehavior: () => ({ left: 0, top: 0 }),
-        routes: [...tabRoutes, ...perfilRoutes],
+        routes,
         history: createWebHistory('/'),
     });
 
