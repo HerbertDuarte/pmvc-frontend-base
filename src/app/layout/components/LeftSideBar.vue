@@ -6,17 +6,16 @@ const sideBarStore = useSideBarStore();
 
 <template>
     <q-drawer behavior="desktop" v-model="sideBarStore.control" show-if-above bordered class="bg-slate-100">
-
         <q-img
             src="https://cdn.shopify.com/s/files/1/0066/4574/3686/files/Abstract_LinkedIn_Background.png?v=1627912075"
             class="h-36">
-            <div class="absolute-bottom bg-transparent">
+            <div class="size-full bg-black/20">
                 <q-avatar size="56px" class="q-mb-sm">
                     <img
-                        src="https://media.licdn.com/dms/image/C4E03AQFpbjnnW6dm6Q/profile-displayphoto-shrink_800_800/0/1575046662258?e=1727913600&v=beta&t=nko2U_EUo6aXSjLa-NtL6NVCK6e7wWOsoZhz5VRG2B4">
+                        src="https://media.licdn.com/dms/image/D4D03AQEA9ToGtXwYfQ/profile-displayphoto-shrink_200_200/0/1712106886747?e=1727913600&v=beta&t=0J6NLyJfNdUQtUiNsGyMc1nNrMOYO_Toeq6jCMhJX3I">
                 </q-avatar>
-                <div class="text-weight-bold">Jaquionias Ferraz</div>
-                <div>@jac</div>
+                <div class="text-weight-bold">Herbert Duarte</div>
+                <div>@herbert</div>
             </div>
         </q-img>
         <q-list class="p-4 text-slate-600">
