@@ -2,4 +2,4 @@
 declare module 'quasar/wrappers' {
     const boot: any;
     export { boot };
-  }
+}
