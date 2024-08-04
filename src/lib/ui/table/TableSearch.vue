@@ -2,9 +2,15 @@
 import { ref } from 'vue';
 
 const search = ref('');
+const props = defineProps({
+    findAction: {
+        type: Function,
+        required: true,
+    },
+});
 
 function searchClick() {
-    console.log(search.value);
+    props.findAction(search.value);
 }
 </script>
 <template>
