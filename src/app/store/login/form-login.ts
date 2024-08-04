@@ -1,22 +1,22 @@
-import { defineStore, storeToRefs } from 'pinia';
+import { defineStore } from 'pinia';
+import { LoginPayload, useAuthStore } from '../auth/authStore';
 import { ref } from 'vue';
-import { useAuthStore } from '../auth/authStore';
-import { useRouter } from 'vue-router';
 
 export const useFormLogin = defineStore('form-login', () => {
-    const router = useRouter();
     const auth = useAuthStore();
-    const { isAuthenticated } = storeToRefs(auth);
-    const email = ref('');
+
+    const username = ref('');
     const password = ref('');
 
-    function submit() {
-        isAuthenticated.value = true;
-        router.push('/');
+    async function submit() {
+        await auth.doLogin({
+            username: username.value,
+            password: password.value,
+        });
     }
 
     return {
-        email,
+        username,
         password,
         submit,
     };

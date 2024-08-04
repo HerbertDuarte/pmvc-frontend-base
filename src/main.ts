@@ -1,8 +1,5 @@
 import { createApp } from 'vue';
 import { Quasar } from 'quasar';
-import quasarLang from 'quasar/lang/pt-BR';
-import quasarIconSet from 'quasar/icon-set/svg-material-icons';
-
 import '@quasar/extras/roboto-font-latin-ext/roboto-font-latin-ext.css';
 import '@quasar/extras/material-icons/material-icons.css';
 import '@quasar/extras/material-icons-outlined/material-icons-outlined.css';
@@ -19,30 +16,16 @@ import '@quasar/extras/eva-icons/eva-icons.css';
 import '@quasar/extras/themify/themify.css';
 import '@quasar/extras/line-awesome/line-awesome.css';
 import '@quasar/extras/bootstrap-icons/bootstrap-icons.css';
-
 import 'quasar/src/css/index.sass';
 import App from './app/App.vue';
 import './styles/globals.css';
 import { createPinia } from 'pinia';
 import { buildRouter } from './app/router';
+import { quasarOptions } from './config/quasar-options';
 
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(buildRouter());
-app.use(Quasar, {
-    plugins: {},
-    lang: quasarLang,
-    iconSet: quasarIconSet,
-    config: {
-        brand: {
-            // primary: '#e46262',
-            // ... or all other brand colors
-        },
-        // notify: {...}, // default set of options for Notify Quasar plugin
-        // loading: {...}, // default set of options for Loading Quasar plugin
-        // loadingBar: { ... }, // settings for LoadingBar Quasar plugin
-        // ..and many more (check Installation card on each Quasar component/directive/plugin)
-    },
-});
+app.use(Quasar, quasarOptions);
 app.mount('#app');

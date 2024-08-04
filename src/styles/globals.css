@@ -5,3 +5,91 @@
 .cti-input {
     @apply bg-slate-100 px-4 rounded;
 }
+/* Quasar: flex.styl */
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+.order-first {
+    order: -10000;
+}
+.order-last {
+    order: 10000;
+}
+/* TailwindCSS */
+.flex {
+    display: flex;
+}
+.order-first {
+    order: -9999;
+}
+.order-last {
+    order: 9999;
+}
+
+/* Quasar: mouse.styl */
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}
+.cursor-pointer {
+    cursor: pointer !important;
+}
+/* TailwindCSS */
+.cursor-not-allowed {
+    cursor: not-allowed;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Quasar: size.styl */
+.block {
+    display: block !important;
+}
+.inline-block {
+    display: inline-block !important;
+}
+/* TailwindCSS */
+.block {
+    display: block;
+}
+.inline-block {
+    display: inline-block;
+}
+
+/* Quasar: typography.styl */
+.text-justify {
+    text-align: justify;
+    hyphens: auto;
+}
+/* TailwindCSS */
+.text-justify {
+    text-align: justify;
+}
+
+/* Quasar: visibility.styl */
+.hidden {
+    display: none !important;
+}
+.invisible {
+    visibility: hidden !important;
+}
+.overflow-auto {
+    overflow: auto !important;
+}
+.overflow-hidden {
+    overflow: hidden !important;
+}
+/* TailwindCSS */
+.hidden {
+    display: none;
+}
+.invisible {
+    visibility: hidden;
+}
+.overflow-auto {
+    overflow: auto;
+}
+.overflow-hidden {
+    overflow: hidden;
+}

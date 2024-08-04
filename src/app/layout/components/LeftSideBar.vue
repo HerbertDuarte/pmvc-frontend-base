@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import { tabRoutes } from '../../router/routes/tabRoutes';
+import { useAuthStore } from '../../store/auth/authStore';
 import { useSideBarStore } from '../states/side-bar.state';
 const sideBarStore = useSideBarStore();
+const authStore = useAuthStore();
+
+const { user } = storeToRefs(authStore);
 </script>
 
 <template>
@@ -10,12 +15,12 @@ const sideBarStore = useSideBarStore();
             src="https://cdn.shopify.com/s/files/1/0066/4574/3686/files/Abstract_LinkedIn_Background.png?v=1627912075"
             class="h-36">
             <div class="size-full bg-black/20">
-                <q-avatar size="56px" class="q-mb-sm">
+                <q-avatar size="48px" class="q-mb-sm">
                     <img
-                        src="https://media.licdn.com/dms/image/D4D03AQEA9ToGtXwYfQ/profile-displayphoto-shrink_200_200/0/1712106886747?e=1727913600&v=beta&t=0J6NLyJfNdUQtUiNsGyMc1nNrMOYO_Toeq6jCMhJX3I">
+                        src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541">
                 </q-avatar>
-                <div class="text-weight-bold">Herbert Duarte</div>
-                <div>@herbert</div>
+                <div class="text-weight-bold">{{ user?.nome }}</div>
+                <div>{{ user?.email }}</div>
             </div>
         </q-img>
         <q-list class="p-4 text-slate-600">
@@ -26,7 +31,7 @@ const sideBarStore = useSideBarStore();
                 <q-item-section>
                     <q-item-label class="text-sm font-medium">{{
                         tab.title
-                    }}</q-item-label>
+                        }}</q-item-label>
                 </q-item-section>
             </q-item>
         </q-list>

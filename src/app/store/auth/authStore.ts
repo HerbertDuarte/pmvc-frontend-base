@@ -3,11 +3,13 @@ import { api } from '../../../boot/axios';
 import { Notify, Loading, QSpinnerBall } from 'quasar';
 import { ref } from 'vue';
 import { Usuario } from '../../entities/Usuario';
+import { buildRouter } from '../../router';
+import { Axios, AxiosError } from 'axios';
 
 type UserLevel = 'Administrador' | 'Usuário';
 
-type LoginPayload = {
-    email: string;
+export type LoginPayload = {
+    username: string;
     password: string;
 };
 
@@ -22,7 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
     const token = ref<string | null>();
     const isAuthenticated = ref(false);
     const isAdmin = ref(false);
-
+    const router = buildRouter();
     const loadingProps = {
         message: 'Entrando em contato com servidor...',
         delay: 400,
@@ -44,6 +46,11 @@ export const useAuthStore = defineStore('auth', () => {
             if (response.data.access_token) {
                 notifyWelcome();
             }
+            if (router) {
+                router.push('/');
+            } else {
+                console.error('Router is undefined');
+            }
         } catch (error: any) {
             notifyError(error);
         }
@@ -54,18 +61,18 @@ export const useAuthStore = defineStore('auth', () => {
         api.defaults.headers.common.Authorization = 'Bearer ' + strToken;
         token.value = strToken;
         isAuthenticated.value = true;
-        window.sessionStorage.setItem('token', token.value);
+        window.localStorage.setItem('token', token.value);
     }
 
     function setUser(userPayload: Usuario) {
         user.value = userPayload;
         setAccessLevel(userPayload.nivel);
-        window.sessionStorage.setItem('user_id', userPayload.id);
-        window.sessionStorage.setItem('name_user', userPayload.nome);
+        window.localStorage.setItem('user_id', userPayload.id);
+        window.localStorage.setItem('name_user', userPayload.nome);
     }
 
     function setAccessLevel(level: UserLevel) {
-        window.sessionStorage.setItem('access_level', level);
+        window.localStorage.setItem('access_level', level);
         if (level === 'Administrador') {
             isAdmin.value = true;
         }
@@ -74,31 +81,34 @@ export const useAuthStore = defineStore('auth', () => {
     function removeToken() {
         token.value = '';
         isAuthenticated.value = false;
-        window.sessionStorage.removeItem('token');
+        window.localStorage.removeItem('token');
     }
 
     function removeUser() {
         user.value = null;
-        window.sessionStorage.removeItem('user_id');
-        window.sessionStorage.removeItem('name_user');
+        window.localStorage.removeItem('user_id');
+        window.localStorage.removeItem('name_user');
     }
 
     function removeAccessLevel() {
         isAdmin.value = false;
-        window.sessionStorage.removeItem('access_level');
+        window.localStorage.removeItem('access_level');
     }
 
     async function initSystem() {
-        const token = window.sessionStorage.getItem('token');
+        const token = window.localStorage.getItem('token');
+        const userId = window.localStorage.getItem('user_id');
+
         if (token) {
             setToken(token);
         } else {
             removeToken();
         }
+
+        if (userId) await getUser(userId);
     }
 
     async function getUser(id: string) {
-        api.defaults.headers.common.Authorization = 'Bearer ' + token.value;
         const { data } = await api.get<Usuario>(`usuarios/${id}`);
         setAccessLevel(data.nivel);
         setUser(data);
@@ -123,13 +133,24 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     function notifyError(error: any) {
-        Notify.create({
-            color: 'negative',
-            icon: 'close',
-            position: 'top',
-            timeout: 2000,
-            message: error.response.data.message,
-        });
+        if (error instanceof AxiosError) {
+            console.log(error);
+            if (error.response?.status === 401) {
+                Notify.create({
+                    color: 'negative',
+                    position: 'top',
+                    timeout: 2000,
+                    message: 'Usuário ou senha inválidos',
+                });
+                return;
+            }
+            Notify.create({
+                color: 'negative',
+                position: 'top',
+                timeout: 2000,
+                message: error?.response?.data?.message ?? error.message,
+            });
+        }
     }
 
     return {

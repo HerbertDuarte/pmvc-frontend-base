@@ -8,19 +8,10 @@
                 <slot name="header" />
                 <TableSearch class="flex-1" />
             </div>
-            <q-table
-                :rows="dados"
-                :columns="colunas"
-                @row-click="(row) => (rowClick ? rowClick(row) : null)"
-            >
+            <q-table :rows="dados.data" :columns="colunas" @row-click="(row) => (rowClick ? rowClick(row) : null)">
                 <template v-slot:header="props">
                     <q-tr :props="props">
-                        <q-th
-                            v-for="coluna in colunas"
-                            :key="coluna.name"
-                            :props="props"
-                            :class="coluna.align"
-                        >
+                        <q-th v-for="coluna in colunas" :key="coluna.name" :props="props" :class="coluna.align">
                             <span class="font-bold text-slate-700">{{
                                 coluna.label
                             }}</span>
@@ -39,14 +30,13 @@
 <script setup lang="ts">
 import { QTableColumn } from 'quasar';
 import TableSearch from './TableSearch.vue';
-import { ref } from 'vue';
 import Pagination from './Pagination.vue';
+import { PageData } from './PageData';
 
-const page = ref(1);
 
 defineProps({
     dados: {
-        type: Array,
+        type: PageData,
         required: true,
     },
     colunas: {
@@ -63,6 +53,14 @@ defineProps({
     },
     rowClick: {
         type: Function,
+        required: false,
+    },
+    paginaAtual: {
+        type: Number,
+        required: false,
+    },
+    totalPaginas: {
+        type: Number,
         required: false,
     },
 });

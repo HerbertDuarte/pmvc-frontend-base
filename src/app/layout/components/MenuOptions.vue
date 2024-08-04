@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../store/auth/authStore';
-import { storeToRefs } from 'pinia';
 const auth = useAuthStore();
-const { isAuthenticated } = storeToRefs(auth)
 defineEmits(['handleSideBar']);
 
 const router = useRouter();
@@ -12,9 +10,7 @@ function perfil() {
 }
 
 function sair() {
-    isAuthenticated.value = false;
-    router.push('/login');
-    throw new Error('Sessão encerrada');
+    auth.logout();
 }
 </script>
 
