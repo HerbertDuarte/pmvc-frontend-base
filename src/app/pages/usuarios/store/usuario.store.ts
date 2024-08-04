@@ -1,43 +1,65 @@
 import { defineStore } from 'pinia';
-import { Usuario } from '../../../entities/Usuario';
+import { Usuario } from '../../../../entities/Usuario';
 import { ref } from 'vue';
 import { api } from '../../../../boot/axios';
-import { PageData } from '../../../ui/table/PageData';
-
-type Usuarios = PageData<Usuario>;
+import { usePageProps } from '../../../../lib/paginacao/page-props';
+import { PaginateUtil } from '../../../../lib/paginacao/paginate-util';
+import { PaginateResponse } from '../../../../lib/paginacao/paginate-response';
+import { Queries } from '../../../../lib/paginacao/queries';
+import { Notify } from 'quasar';
+type Usuarios = PaginateResponse<Usuario>;
 
 export const useUsuarioStore = defineStore('usuario', () => {
     const usuarios = ref<Usuarios>({ data: [], maxPag: 0 });
     const usuario = ref<Usuario | null>(null);
-    const itensPorPagina = ref(5);
-    const pagina = ref(1);
+    const pageProps = usePageProps();
 
-    function setUsuarios(data: Usuarios) {
+    async function getUsuarios(queries?: Queries) {
+        const data = await PaginateUtil.paginate<Usuario>(
+            'usuarios',
+            pageProps,
+            queries,
+        );
         usuarios.value = data;
     }
 
-    function setUsuario(data: Usuario) {
+    async function getUsuario(row: { id: string }) {
+        const { data } = await api.get<Usuario>('/usuarios/' + row.id);
         usuario.value = data;
     }
 
-    async function getUsuarios() {
-        const { data } = await api.get(
-            `/usuarios?pagina=${pagina.value}&itensPorPagina=${itensPorPagina.value}`,
-        );
-        setUsuarios(data);
+    async function deletaUsuario(row: { id: string }) {
+        await api.delete('/usuarios/' + row.id);
+        await getUsuarios();
+        Notify.create({
+            message: 'Usuário deletado com sucesso',
+            type: 'positive',
+        });
     }
 
-    async function getUsuario(userId: string) {
-        const { data } = await api.get<Usuarios>('/usuarios/' + userId);
-        setUsuarios(data);
+    async function salvaUsuario(usuario: Usuario) {
+        await api.post('/usuarios', usuario);
+        Notify.create({
+            message: 'Usuário salvo com sucesso',
+            type: 'positive',
+        });
+    }
+
+    async function atualizaUsuario(usuario: Usuario) {
+        await api.put('/usuarios/' + usuario.id, usuario);
+        Notify.create({
+            message: 'Usuário atualizado com sucesso',
+            type: 'positive',
+        });
     }
 
     return {
         usuarios,
         usuario,
-        setUsuarios,
-        setUsuario,
         getUsuarios,
         getUsuario,
+        deletaUsuario,
+        salvaUsuario,
+        atualizaUsuario,
     };
 });

@@ -1,6 +1,11 @@
 <template>
     <main class="flex justify-center items-center">
-        <CtiTable class="max-w-[1366px]" titulo="Usuários" :dados="usuarios" :colunas="colunas" />
+        <CtiTable class="max-w-[1366px]" titulo="Usuários" :dados="usuarios" :colunas="colunas">
+            <template v-slot:selects>
+                <q-select class="cti-input" dense borderless v-model="selectNivel" :options="selectProps"
+                    label="Nível" />
+            </template>
+        </CtiTable>
     </main>
 </template>
 
@@ -12,7 +17,15 @@ import { useUsuarioStore } from './store/usuario.store';
 import { storeToRefs } from 'pinia';
 
 const usuarioStore = useUsuarioStore();
+const { deletaUsuario, atualizaUsuario } = usuarioStore
 const { usuarios } = storeToRefs(usuarioStore);
+const selectProps = [
+    { label: 'Selecione', value: null },
+    { label: 'Administrador', value: 'Administrador' },
+    { label: 'Usuário', value: 'Usuario' },
+];
+
+const selectNivel = ref(selectProps[0])
 
 
 const colunas: QTableColumn[] = [
@@ -21,6 +34,11 @@ const colunas: QTableColumn[] = [
     { name: 'nivel', label: 'Nível', field: 'nivel', align: 'center' },
     { name: 'situacao', label: 'Situação', field: 'situacao', align: 'center' },
     { name: 'email', label: 'E-mail', field: 'email' },
+];
+
+const actions = [
+    { label: 'Editar', icon: 'edit', color: 'primary', action: atualizaUsuario },
+    { label: 'Excluir', icon: 'delete', color: 'negative', action: deletaUsuario },
 ];
 
 onMounted(async () => {

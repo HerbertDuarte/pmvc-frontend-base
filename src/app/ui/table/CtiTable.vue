@@ -5,7 +5,7 @@
                 {{ titulo }}
             </h2>
             <div class="flex w-full justify-between items-center gap-3">
-                <slot name="header" />
+                <slot name="selects" />
                 <TableSearch class="flex-1" />
             </div>
             <q-table :rows="dados.data" :columns="colunas" @row-click="(row) => (rowClick ? rowClick(row) : null)">
@@ -14,14 +14,14 @@
                         <q-th v-for="coluna in colunas" :key="coluna.name" :props="props" :class="coluna.align">
                             <span class="font-bold text-slate-700">{{
                                 coluna.label
-                            }}</span>
+                                }}</span>
                         </q-th>
                         <q-th v-if="acoes" class="text-center">Ações</q-th>
                     </q-tr>
                 </template>
 
                 <template v-slot:bottom>
-                    <Pagination />
+                    <Pagination :total-paginas="dados.maxPag" />
                 </template>
             </q-table>
         </q-card>
@@ -31,12 +31,11 @@
 import { QTableColumn } from 'quasar';
 import TableSearch from './TableSearch.vue';
 import Pagination from './Pagination.vue';
-import { PageData } from './PageData';
-
+import { PaginateResponse } from '../../../lib/paginacao/paginate-response';
 
 defineProps({
     dados: {
-        type: PageData,
+        type: PaginateResponse,
         required: true,
     },
     colunas: {

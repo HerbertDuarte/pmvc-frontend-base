@@ -1,4 +1,4 @@
-export class PageData<T> {
+export class PaginateResponse<T> {
     data!: T[];
     maxPag!: number;
 }

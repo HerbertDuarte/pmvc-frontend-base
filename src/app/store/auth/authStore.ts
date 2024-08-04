@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { api } from '../../../boot/axios';
 import { Notify, Loading, QSpinnerBall } from 'quasar';
 import { ref } from 'vue';
-import { Usuario } from '../../entities/Usuario';
+import { Usuario } from '../../../entities/Usuario';
 import { buildRouter } from '../../router';
 import { Axios, AxiosError } from 'axios';
 
