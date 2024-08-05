@@ -11,14 +11,13 @@ defineProps({
 </script>
 
 <template>
-    <div class="w-full flex justify-end items-center pt-2 gap-2">
 
-        <div class="flex items-center justify-center gap-2">
-            <q-btn flat dense icon="chevron_left" />
+    <div class="flex items-center justify-center gap-2">
+        <q-btn flat dense icon="chevron_left" />
 
-            <div class="flex gap-2 text-bold px-1">{{ currentPage }} /{{ totalPaginas }}</div>
+        <div class="flex gap-2 text-bold px-1">{{ currentPage }} / {{ totalPaginas }}</div>
 
-            <q-btn flat dense icon="chevron_right" />
-        </div>
+        <q-btn flat dense icon="chevron_right" />
     </div>
+
 </template>
