@@ -5,6 +5,7 @@ import LoginPage from './pages/login/LoginPage.vue';
 import { useAuthStore } from './store/auth/authStore';
 const auth = useAuthStore()
 
+
 onMounted(async () => {
     await auth.initSystem()
 })
