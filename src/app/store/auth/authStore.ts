@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { api } from '../../../boot/axios';
 import { Notify, Loading, QSpinnerBall } from 'quasar';
 import { ref } from 'vue';
-import { Usuario } from '../../../entities/Usuario';
+import { Usuario } from '../../../entities/usuario';
 import { buildRouter } from '../../router';
 import { Axios, AxiosError } from 'axios';
 
@@ -96,16 +96,21 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     async function initSystem() {
-        const token = window.localStorage.getItem('token');
-        const userId = window.localStorage.getItem('user_id');
+        try {
+            const token = window.localStorage.getItem('token');
+            const userId = window.localStorage.getItem('user_id');
 
-        if (token) {
-            setToken(token);
-        } else {
-            removeToken();
+            if (token) {
+                setToken(token);
+            } else {
+                removeToken();
+            }
+
+            if (userId) await getUser(userId);
+        } catch (error) {
+            logout();
+            console.log(error);
         }
-
-        if (userId) await getUser(userId);
     }
 
     async function getUser(id: string) {

@@ -13,7 +13,9 @@ export class PaginateUtil {
 
         if (queries) {
             for (const [key, value] of Object.entries(queries)) {
-                url += `&${key}=${value}`;
+                if (value) {
+                    url += `&${key}=${value}`;
+                }
             }
         }
 

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { Usuario } from '../../../../entities/Usuario';
+import { Usuario } from '../../../../entities/usuario';
 import { ref } from 'vue';
 import { api } from '../../../../boot/axios';
 import { usePageProps } from '../../../../lib/paginacao/page-props';
