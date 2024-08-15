@@ -43,8 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, Ref, ref } from "vue";
-import { api } from "../../../boot/axios";
+import { onMounted, ref } from "vue";
+import { api } from "../../../../boot/axios";
 
 type FormCreateUsuario = {
     nome: string;

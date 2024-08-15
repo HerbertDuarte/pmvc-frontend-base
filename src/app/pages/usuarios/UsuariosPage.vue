@@ -1,7 +1,7 @@
 <template>
     <main class="flex justify-center items-center">
         <CtiTable class="max-w-[1366px]" titulo="Usuários" :dados="usuarios" :colunas="colunas"
-            :find-action="findAction">
+            :find-action="findAction" :acoes="acoes">
             <template v-slot:selects>
                 <SelectNivel />
             </template>
@@ -38,7 +38,7 @@ const colunas: QTableColumn[] = [
     { name: 'email', label: 'E-mail', field: 'email' },
 ];
 
-const actions: Acao[] = [
+const acoes: Acao[] = [
     { label: 'Editar', icon: 'edit', color: 'primary', action: atualizaUsuario },
     { label: 'Excluir', icon: 'delete', color: 'negative', action: deletaUsuario },
 ];

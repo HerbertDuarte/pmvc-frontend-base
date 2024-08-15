@@ -19,7 +19,7 @@
                         <q-th v-for="coluna in colunas" :key="coluna.name" :props="props" :class="coluna.align">
                             <span class="font-bold text-slate-700">{{
                                 coluna.label
-                            }}</span>
+                                }}</span>
                         </q-th>
                     </q-tr>
                 </template>
@@ -54,7 +54,7 @@ import { Dialog, QTableColumn } from 'quasar';
 import TableSearch from './TableSearch.vue';
 import Pagination from './Pagination.vue';
 import { PaginateResponse } from '../../../lib/paginacao/paginate-response';
-import FormCreateUsuario from '../../../app/pages/usuarios/FormCreateUsuario.vue';
+import FormCreateUsuario from '../../../app/pages/usuarios/componentes/FormCreateUsuario.vue';
 
 export type Acao = {
     label: string;
