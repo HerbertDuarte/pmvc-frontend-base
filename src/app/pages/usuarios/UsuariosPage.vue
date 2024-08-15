@@ -30,12 +30,11 @@ const { usuarios, busca } = storeToRefs(usuarioStore);
 
 
 const colunas: QTableColumn[] = [
-    { name: 'nome', label: 'Nome', field: 'nome', align: 'left' },
-    { name: 'login', label: 'Login', field: 'login', align: 'left' },
-    { name: 'nivel', label: 'Nível', field: 'nivel', align: 'left' },
-    { name: 'situacao', label: 'Situação', field: 'situacao', align: 'left' },
-    { name: 'email', label: 'E-mail', field: 'email', align: 'left' },
-    { name: 'acoes', label: 'Ações', field: "acoes", align: 'right' },
+    { name: 'nome', label: 'Nome', field: 'nome', align: 'center' },
+    { name: 'login', label: 'Login', field: 'login', align: 'center' },
+    { name: 'nivel', label: 'Nível', field: 'nivel', align: 'center' },
+    { name: 'situacao', label: 'Situação', field: 'situacao', align: 'center' },
+    { name: 'email', label: 'E-mail', field: 'email' },
 ];
 
 const acoes: Acao[] = [
