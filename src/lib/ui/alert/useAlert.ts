@@ -2,17 +2,17 @@ import { Dialog } from 'quasar';
 import CtiAlert from './components/CtiAlert.vue';
 
 type AlertProps = {
-    message: string;
+    mensagem: string;
     description?: string;
     buttonTitle?: string;
     action?: () => void;
 };
 
-export function CreateAlert({ message, action, buttonTitle }: AlertProps) {
+export function CreateAlert({ mensagem, action, buttonTitle }: AlertProps) {
     Dialog.create({
         component: CtiAlert,
         componentProps: {
-            message,
+            mensagem,
             buttonTitle,
             action,
         },

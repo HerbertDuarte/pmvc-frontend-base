@@ -24,7 +24,7 @@
                 <template v-slot:body-cell-acoes="props">
 
                     <q-td v-if="acoes">
-                        <div class="gap-1 flex justify-end">
+                        <div class="space-x-1.5 text-end">
                             <q-btn v-for="acao in acoes" :key="acao.label" dense :color="acao.color"
                                 @click="acao.action(props.row)">
                                 <q-icon size="20px" :name="acao.icon" />
