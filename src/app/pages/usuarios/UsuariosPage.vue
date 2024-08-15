@@ -1,6 +1,7 @@
 <template>
     <main class="flex justify-center items-center">
-        <CtiTable class="max-w-[1366px]" titulo="Usuários" :dados="usuarios" :colunas="colunas">
+        <CtiTable class="max-w-[1366px]" titulo="Usuários" :dados="usuarios" :colunas="colunas"
+            :find-action="findAction">
             <template v-slot:selects>
                 <SelectNivel />
             </template>
@@ -10,8 +11,8 @@
 
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar';
-import CtiTable from '../../ui/table/CtiTable.vue';
-import { onMounted } from 'vue';
+import CtiTable, { Acao } from '../../../lib/ui/table/CtiTable.vue';
+import { onMounted, ref } from 'vue';
 import { useUsuarioStore } from './store/usuario.store';
 import { storeToRefs } from 'pinia';
 import SelectNivel from './componentes/SelectNivel.vue';
@@ -19,6 +20,15 @@ import SelectNivel from './componentes/SelectNivel.vue';
 const usuarioStore = useUsuarioStore();
 const { deletaUsuario, atualizaUsuario } = usuarioStore
 const { usuarios } = storeToRefs(usuarioStore);
+
+const nivelOptions = [
+    { label: 'Todos', value: null },
+    { label: 'Administrador', value: 'Administrador' },
+    { label: 'Usuário', value: 'Usuario' },
+];
+
+const selectNivelModel = ref(nivelOptions[0]);
+
 
 const colunas: QTableColumn[] = [
     { name: 'nome', label: 'Nome', field: 'nome', align: 'center' },
@@ -28,12 +38,17 @@ const colunas: QTableColumn[] = [
     { name: 'email', label: 'E-mail', field: 'email' },
 ];
 
-const actions = [
+const actions: Acao[] = [
     { label: 'Editar', icon: 'edit', color: 'primary', action: atualizaUsuario },
     { label: 'Excluir', icon: 'delete', color: 'negative', action: deletaUsuario },
 ];
 
+const findAction = async () => {
+    const nivel = selectNivelModel.value.value;
+    await usuarioStore.getUsuarios({ nivel });
+};
+
 onMounted(async () => {
-    await usuarioStore.getUsuarios();
+    await findAction();
 });
 </script>

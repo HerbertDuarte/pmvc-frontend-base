@@ -7,6 +7,7 @@ import { PaginateUtil } from '../../../../lib/paginacao/paginate-util';
 import { PaginateResponse } from '../../../../lib/paginacao/paginate-response';
 import { Queries } from '../../../../lib/paginacao/queries';
 import { Notify } from 'quasar';
+import { CreateAlert } from '../../../../lib/ui/alert/useAlert';
 type Usuarios = PaginateResponse<Usuario>;
 
 export const useUsuarioStore = defineStore('usuario', () => {
@@ -29,15 +30,21 @@ export const useUsuarioStore = defineStore('usuario', () => {
     }
 
     async function deletaUsuario(row: { id: string }) {
-        await api.delete('/usuarios/' + row.id);
-        await getUsuarios();
-        Notify.create({
-            message: 'Usuário deletado com sucesso',
-            type: 'positive',
+        CreateAlert({
+            message: 'Deseja realmente deletar esse usuário?',
+            buttonTitle: 'Deletar',
+            action: async () => {
+                await api.delete('/usuarios/' + row.id);
+                await getUsuarios();
+                Notify.create({
+                    message: 'Usuário deletado com sucesso',
+                    type: 'positive',
+                });
+            },
         });
     }
 
-    async function salvaUsuario(usuario: Usuario) {
+    async function criarUsuario(usuario: Usuario) {
         await api.post('/usuarios', usuario);
         Notify.create({
             message: 'Usuário salvo com sucesso',
@@ -59,7 +66,7 @@ export const useUsuarioStore = defineStore('usuario', () => {
         getUsuarios,
         getUsuario,
         deletaUsuario,
-        salvaUsuario,
+        criarUsuario,
         atualizaUsuario,
     };
 });
