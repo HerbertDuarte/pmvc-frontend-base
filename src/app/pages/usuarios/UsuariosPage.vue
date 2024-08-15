@@ -1,10 +1,14 @@
 <template>
     <main class="flex justify-center items-center">
-        <CtiTable class="max-w-[1366px]" titulo="Usuários" :findAction="getAll" :dados="usuarios" :colunas="colunas"
-            :acoes="acoes">
-            <template v-slot:selects>
-                <q-select class="cti-input" dense borderless v-model="selectNivelModel" :options="nivelOptions"
-                    label="Nível" />
+        <CtiTable class="max-w-[1366px]" titulo="Usuários" :dados="usuarios" :colunas="colunas" :acoes="acoes"
+            :busca="busca">
+            <template v-slot:header>
+                <SelectNivel />
+                <BuscaUsuario :find-action="getUsuarios" :busca="busca" class="flex-1" />
+            </template>
+
+            <template v-slot:bottom>
+                <Pagination :find-action="getUsuarios" :total-paginas="usuarios.maxPag" />
             </template>
         </CtiTable>
     </main>
@@ -13,21 +17,16 @@
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar';
 import CtiTable, { Acao } from '../../../lib/ui/table/CtiTable.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { useUsuarioStore } from './store/usuario.store';
 import { storeToRefs } from 'pinia';
+import SelectNivel from './components/SelectNivel.vue';
+import Pagination from '../../../lib/ui/table/Pagination.vue';
+import BuscaUsuario from './components/BuscaUsuario.vue';
 
 const usuarioStore = useUsuarioStore();
-const { deletaUsuario, atualizaUsuario } = usuarioStore
-const { usuarios } = storeToRefs(usuarioStore);
-
-const nivelOptions = [
-    { label: 'Todos', value: null },
-    { label: 'Administrador', value: 'Administrador' },
-    { label: 'Usuário', value: 'Usuario' },
-];
-
-const selectNivelModel = ref(nivelOptions[0]);
+const { deletaUsuario, atualizaUsuario, getUsuarios } = usuarioStore
+const { usuarios, busca } = storeToRefs(usuarioStore);
 
 
 const colunas: QTableColumn[] = [
@@ -44,12 +43,8 @@ const acoes: Acao[] = [
     { label: 'Excluir', icon: 'delete', color: 'negative', action: deletaUsuario },
 ];
 
-async function getAll(search: string = "") {
-    const nivel = selectNivelModel.value.value;
-    await usuarioStore.getUsuarios({ nivel, busca: search });
-}
 
 onMounted(async () => {
-    await getAll()
+    await getUsuarios()
 });
 </script>

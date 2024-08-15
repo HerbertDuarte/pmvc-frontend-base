@@ -2,13 +2,13 @@ import { api } from '../../boot/axios';
 import { PageProps } from './page-props';
 import { PaginateResponse } from './paginate-response';
 import { Queries } from './queries';
-
+type PaginateProps = { path: string; pageProps: PageProps; queries?: Queries };
 export class PaginateUtil {
-    public static async paginate<T>(
-        path: string,
-        pageProps: PageProps,
-        queries?: Queries,
-    ): Promise<PaginateResponse<T>> {
+    public static async paginate<T>({
+        pageProps,
+        path,
+        queries,
+    }: PaginateProps): Promise<PaginateResponse<T>> {
         let url = `/${path}?pagina=${pageProps.pagina.value}&itensPorPagina=${pageProps.itensPorPagina.value}`;
 
         if (queries) {

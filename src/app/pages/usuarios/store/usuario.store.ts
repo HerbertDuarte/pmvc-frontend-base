@@ -1,26 +1,35 @@
 import { defineStore } from 'pinia';
 import { Usuario } from '../../../../entities/Usuario';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { api } from '../../../../boot/axios';
 import { usePageProps } from '../../../../lib/paginacao/page-props';
 import { PaginateUtil } from '../../../../lib/paginacao/paginate-util';
 import { PaginateResponse } from '../../../../lib/paginacao/paginate-response';
 import { Queries } from '../../../../lib/paginacao/queries';
 import { Notify } from 'quasar';
+import { nivelOptions } from '../options/select-nivel-options';
+
 type Usuarios = PaginateResponse<Usuario>;
 
 export const useUsuarioStore = defineStore('usuario', () => {
     const usuarios = ref<Usuarios>({ data: [], maxPag: 0 });
     const usuario = ref<Usuario | null>(null);
+    const busca = ref('');
+    const selectNivel = ref(nivelOptions[0]);
     const pageProps = usePageProps();
 
-    async function getUsuarios(queries?: Queries) {
-        const data = await PaginateUtil.paginate<Usuario>(
-            'usuarios',
+    async function getUsuarios() {
+        const queries: Queries = {
+            busca: busca.value,
+            nivel: selectNivel.value.value,
+        };
+
+        const { data, maxPag } = await PaginateUtil.paginate<Usuario>({
             pageProps,
+            path: 'usuarios',
             queries,
-        );
-        usuarios.value = data;
+        });
+        usuarios.value = { data, maxPag };
     }
 
     async function getUsuario(row: { id: string }) {
@@ -53,6 +62,8 @@ export const useUsuarioStore = defineStore('usuario', () => {
         });
     }
 
+    watch(selectNivel, getUsuarios);
+
     return {
         usuarios,
         usuario,
@@ -61,5 +72,7 @@ export const useUsuarioStore = defineStore('usuario', () => {
         deletaUsuario,
         salvaUsuario,
         atualizaUsuario,
+        busca,
+        selectNivel,
     };
 });

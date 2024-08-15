@@ -6,8 +6,7 @@
                 {{ titulo }}
             </h2>
             <div class="flex w-full justify-between items-center gap-3">
-                <slot name="selects" />
-                <TableSearch :find-action="findAction" class="flex-1" />
+                <slot name="header" />
             </div>
             <q-table :rows="dados.data" :columns="colunas" @row-click="(row) => (rowClick ? rowClick(row) : null)">
                 <template v-slot:header="props">
@@ -15,7 +14,7 @@
                         <q-th v-for="coluna in colunas" :key="coluna.name" :props="props" :class="coluna.align">
                             <span class="font-bold text-slate-700">{{
                                 coluna.label
-                                }}</span>
+                            }}</span>
                         </q-th>
                     </q-tr>
                 </template>
@@ -33,17 +32,14 @@
                     </q-td>
                 </template>
 
-                <template v-slot:bottom>
-                    <Pagination :findAction="findAction" :total-paginas="dados.maxPag" />
-                </template>
+                <slot name="bottom" />
+
             </q-table>
         </q-card>
     </div>
 </template>
 <script setup lang="ts">
 import { QTableColumn } from 'quasar';
-import TableSearch from './TableSearch.vue';
-import Pagination from './Pagination.vue';
 import { PaginateResponse } from '../../../lib/paginacao/paginate-response';
 
 export type Acao = {
@@ -82,9 +78,6 @@ defineProps({
         type: Number,
         required: false,
     },
-    findAction: {
-        type: Function,
-        required: true,
-    },
+
 });
 </script>
