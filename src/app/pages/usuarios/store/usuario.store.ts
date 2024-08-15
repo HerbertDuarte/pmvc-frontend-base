@@ -6,8 +6,7 @@ import { usePageProps } from '../../../../lib/paginacao/page-props';
 import { PaginateUtil } from '../../../../lib/paginacao/paginate-util';
 import { PaginateResponse } from '../../../../lib/paginacao/paginate-response';
 import { Queries } from '../../../../lib/paginacao/queries';
-import { Dialog, Notify } from 'quasar';
-import { CreateAlert } from '../../../../lib/ui/alert/useAlert';
+import { Notify } from 'quasar';
 import { nivelOptions } from '../options/select-nivel-options';
 
 type Usuarios = PaginateResponse<Usuario>;
