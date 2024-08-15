@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { QTableColumn } from 'quasar';
 import CtiTable from '../../ui/table/CtiTable.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { useUsuarioStore } from './store/usuario.store';
 import { storeToRefs } from 'pinia';
 import SelectNivel from './componentes/SelectNivel.vue';
@@ -19,10 +19,6 @@ import SelectNivel from './componentes/SelectNivel.vue';
 const usuarioStore = useUsuarioStore();
 const { deletaUsuario, atualizaUsuario } = usuarioStore
 const { usuarios } = storeToRefs(usuarioStore);
-
-
-
-
 
 const colunas: QTableColumn[] = [
     { name: 'nome', label: 'Nome', field: 'nome', align: 'center' },

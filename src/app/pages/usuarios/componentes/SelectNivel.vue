@@ -14,7 +14,6 @@ const selectProps = [
 const selectNivel = ref(selectProps[0])
 
 function selectNivelChange() {
-    console.log(selectNivel.value);
     const nivel = selectNivel.value.value;
     usuarioStore.getUsuarios({ nivel });
 }
