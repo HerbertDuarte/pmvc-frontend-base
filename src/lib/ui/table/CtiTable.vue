@@ -1,6 +1,6 @@
 <template>
     <div class="w-full">
-
+        acoes:{{ acoes }}
         <q-card class="rounded-lg p-6 space-y-3">
             <div class="flex justify-between items-center py-2">
                 <h2 class="font-bold text-slate-700 text-lg uppercase">
@@ -41,10 +41,6 @@
             </q-table>
 
             <div class="flex items-end py-3 justify-between w-full">
-                <q-btn @click="add" class="bg-slate-100 text-slate-700" icon="add">
-                    Adicionar
-                </q-btn>
-
                 <slot name="bottom" />
             </div>
         </q-card>
@@ -52,7 +48,6 @@
 </template>
 <script setup lang="ts">
 import { Dialog, QTableColumn } from 'quasar';
-import Pagination from './Pagination.vue';
 import { PaginateResponse } from '../../../lib/paginacao/paginate-response';
 import FormCreateUsuario from '../../../app/pages/usuarios/componentes/FormCreateUsuario.vue';
 
@@ -63,17 +58,6 @@ export type Acao = {
     action: Function;
 };
 
-function add() {
-    Dialog.create({
-        component: FormCreateUsuario,
-        componentProps: {
-            usuarioId: null,
-            administrador: false,
-            enviarBotao: 'Adicionar',
-            exibirBotaoVoltar: true,
-        },
-    })
-}
 defineProps({
     dados: {
         type: PaginateResponse,
