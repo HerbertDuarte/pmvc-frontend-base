@@ -6,9 +6,10 @@ import { usePageProps } from '../../../../lib/paginacao/page-props';
 import { PaginateUtil } from '../../../../lib/paginacao/paginate-util';
 import { PaginateResponse } from '../../../../lib/paginacao/paginate-response';
 import { Queries } from '../../../../lib/paginacao/queries';
-import { Notify } from 'quasar';
+import { Dialog, Notify } from 'quasar';
 import { CreateAlert } from '../../../../lib/ui/alert/useAlert';
 import { nivelOptions } from '../options/select-nivel-options';
+import FormEditUsuario from '../components/edit/FormEditUsuario.vue';
 
 type Usuarios = PaginateResponse<Usuario>;
 
@@ -17,7 +18,7 @@ export const useUsuarioStore = defineStore('usuario', () => {
     const usuario = ref<Usuario | null>(null);
     const busca = ref('');
     const selectNivel = ref(nivelOptions[0]);
-    const pageProps = usePageProps();
+    const pageProps = usePageProps({ itensPorPagina: 10 });
 
     async function getUsuarios() {
         const queries: Queries = {
@@ -53,19 +54,32 @@ export const useUsuarioStore = defineStore('usuario', () => {
         });
     }
 
-    async function criarUsuario(usuario: Usuario) {
-        await api.post('/usuarios', usuario);
+    function criarUsuario(form: Usuario) {
+        api.post('/usuarios', form).then(async () => {
+            await getUsuarios();
+        });
         Notify.create({
             message: 'Usuário salvo com sucesso',
             type: 'positive',
         });
     }
 
-    async function atualizaUsuario(usuario: Usuario) {
-        await api.put('/usuarios/' + usuario.id, usuario);
-        Notify.create({
-            message: 'Usuário atualizado com sucesso',
-            type: 'positive',
+    async function atualizaUsuario(data: Usuario) {
+        usuario.value = data;
+
+        Dialog.create({
+            component: FormEditUsuario,
+            componentProps: {
+                usuario,
+                acao: async () => {
+                    await api.put('/usuarios/' + usuario.value?.id, usuario);
+                    await getUsuarios();
+                    Notify.create({
+                        message: 'Usuário atualizado com sucesso',
+                        type: 'positive',
+                    });
+                },
+            },
         });
     }
 

@@ -1,5 +1,5 @@
 <template>
-    <q-form @submit.prevent.stop="$emit('submit', form)" greedy>
+    <q-form @submit.prevent.stop="() => submit()" greedy>
         <div class="row q-col-gutter-md">
             <div class="col-12 col-sm-4 q-mb-lg">
                 <q-input dense outlined v-model="form.nome" lazy-rules label="Nome" hint="Informe o nome completo sem
@@ -10,19 +10,17 @@
                     clear-icon="close" :rules="emailRules" />
             </div>
             <div class="col-12 col-sm-4 q-mb-lg">
-                <q-select :disable="!administrador" outlined dense v-model="form.nivel" :options="nivelAcesso"
-                    lazy-rules label="Nível" hint="Informe o nível de acesso" clearable clear-icon="close"
-                    :rules="campoVazioRules" />
+                <q-select outlined dense v-model="form.nivel" :options="nivelAcesso" lazy-rules label="Nível"
+                    hint="Informe o nível de acesso" clearable clear-icon="close" :rules="campoVazioRules" />
             </div>
             <div class="col-12 col-sm-3 q-mb-lg">
-                <q-select :disable="!administrador" dense outlined v-model="form.situacao" :options="situacao"
-                    lazy-rules label="Situação" hint="Informe a situação" clearable clear-icon="close"
-                    :rules="campoVazioRules" />
+                <q-select dense outlined v-model="form.situacao" :options="situacao" lazy-rules label="Situação"
+                    hint="Informe a situação" clearable clear-icon="close" :rules="campoVazioRules" />
             </div>
 
             <div class="col-12 col-sm-3 q-mb-lg">
-                <q-input :disable="!administrador" dense outlined v-model="form.login" lazy-rules label="Login"
-                    hint="Informe o nome para login" clearable clear-icon="close" :rules="loginRules" />
+                <q-input dense outlined v-model="form.login" lazy-rules label="Login" hint="Informe o nome para login"
+                    clearable clear-icon="close" :rules="loginRules" />
             </div>
             <div class="col-12 col-sm-3 q-mb-lg">
                 <q-input type="password" dense outlined v-model="form.senha" lazy-rules label="Senha"
@@ -34,42 +32,39 @@
             </div>
         </div>
 
-        <div class="row justify-end q-gutter-sm">
-            <q-btn size="md" icon="save" :label="enviarBotao" type="submit" color="primary" />
-            <q-btn v-if="exibirBotaoVoltar" icon="close" label="Cancelar" color="grey-2" text-color="grey-10"
-                to="/usuarios" />
+        <div class="flex items-center justify-end gap-2 pt-6">
+            <q-btn v-close-popup icon="close" label="Cancelar" color="grey-2" text-color="grey-10" />
+            <q-btn size="md" icon="save" label="Salvar" type="submit" color="primary" />
         </div>
     </q-form>
+
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { api } from "../../../../boot/axios";
+import { useUsuarioStore } from "../../store/usuario.store";
+import { storeToRefs } from "pinia";
+import { Usuario } from "../../../../../entities/usuario";
+const usuarioStore = useUsuarioStore();
+const { usuario } = storeToRefs(usuarioStore);
 
-type FormCreateUsuario = {
-    nome: string;
-    email: string;
-    nivel: string;
-    situacao: string;
-    login: string;
-    senha: string;
-}
-
-const props = defineProps([
-    "administrador",
-    "usuarioId",
-    "enviarBotao",
-    "exibirBotaoVoltar",
-]);
-
-const form = ref<FormCreateUsuario>({
+const formInitialState: Usuario = {
     nome: "",
     email: "",
-    nivel: "",
-    situacao: "",
+    nivel: "Usuário",
+    situacao: "Ativo",
     login: "",
     senha: "",
+};
+
+const props = defineProps({
+    update: {
+        default: false,
+        type: Boolean,
+    }
 });
+
+const form = ref<Usuario>(formInitialState);
 
 const confirmacao_senha = ref("");
 
@@ -77,11 +72,6 @@ const nivelAcesso = ref(["Usuário", "Administrador"]);
 
 const situacao = ref(["Ativo", "Inativo"]);
 
-onMounted(async () => {
-
-});
-
-const campoVazioRules = [(val: string) => !!val || "*Campo obrigatório"];
 
 function validaNome(val: string) {
     const regex = /[!@#$%*()_+=-?°``''~©,.;<>:]|[0-9]/g;
@@ -101,18 +91,20 @@ function validaLogin(val: string) {
 }
 
 function validaSenha() {
-    if (!!props.usuarioId) return true;
+    if (props.update) return true;
 
     return !!form.value.senha.length;
 }
 
 function validaConfirmacaoSenha() {
-    if (!!props.usuarioId && form.value.senha.length == 0) return true;
+    if (!!props.update && form.value.senha.length == 0) return true;
 
     const valoresIguais = form.value.senha === confirmacao_senha.value;
 
     if (valoresIguais) return true;
 }
+
+const campoVazioRules = [(val: string) => !!val || "*Campo obrigatório"];
 
 const nameRules = [
     (val: string) => !!val || "*Campo obrigatório",
@@ -141,13 +133,7 @@ const confirmarSenhaRules = [
         "*A senha deve ser igual a confirmação da senha",
 ];
 
-async function buscaUsuario(id: string) {
-    const { data } = await api.get(`usuarios/${id}`);
-
-    return data;
-}
-
-function preencheCampos(data: FormCreateUsuario) {
+function preencheCampos(data: Usuario) {
     form.value.nome = data.nome;
     form.value.email = data.email;
     form.value.nivel = data.nivel;
@@ -155,11 +141,14 @@ function preencheCampos(data: FormCreateUsuario) {
     form.value.login = data.login;
 }
 
-onMounted(async () => {
-    if (props.usuarioId) {
-        const data = await buscaUsuario(props.usuarioId);
+function submit() {
+    usuarioStore.criarUsuario(form.value)
+    form.value = formInitialState;
+}
 
-        preencheCampos(data);
+onMounted(async () => {
+    if (props.update) {
+        preencheCampos(usuario.value as Usuario);
     }
 });
 </script>

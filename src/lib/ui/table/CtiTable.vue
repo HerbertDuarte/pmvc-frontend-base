@@ -1,21 +1,18 @@
 <template>
     <div class="w-full">
-        acoes:{{ acoes }}
-        <q-card class="rounded-lg p-6 space-y-3">
-            <div class="flex justify-between items-center py-2">
-                <h2 class="font-bold text-slate-700 text-lg uppercase">
-                    {{ titulo }}
-                </h2>
 
-            </div>
+        <q-card class="rounded-lg p-6 space-y-4">
+            <h2 class="font-bold text-slate-700 text-lg uppercase">
+                {{ titulo }}
+            </h2>
             <div class="flex w-full justify-between items-center gap-3">
                 <slot name="header" />
             </div>
-            <q-table hide-pagination :rows="dados.data" :columns="colunas"
+            <q-table :pagination="{ rowsPerPage: dados.data.length }" :rows="dados.data" :columns="colunasTratadas"
                 @row-click="(row) => (rowClick ? rowClick(row) : null)">
                 <template v-slot:header="props">
                     <q-tr :props="props">
-                        <q-th v-for="coluna in colunas" :key="coluna.name" :props="props" :class="coluna.align">
+                        <q-th v-for="coluna in colunasTratadas" :key="coluna.name" :props="props" :class="coluna.align">
                             <span class="font-bold text-slate-700">{{
                                 coluna.label
                             }}</span>
@@ -35,21 +32,20 @@
                         </div>
                     </q-td>
                 </template>
-
-
+                <template v-slot:bottom class="p-0">
+                    <div class="flex items-center justify-between pt-5 w-full">
+                        <slot name="bottom" />
+                    </div>
+                </template>
 
             </q-table>
 
-            <div class="flex items-end py-3 justify-between w-full">
-                <slot name="bottom" />
-            </div>
         </q-card>
     </div>
 </template>
 <script setup lang="ts">
-import { Dialog, QTableColumn } from 'quasar';
+import { QTableColumn } from 'quasar';
 import { PaginateResponse } from '../../../lib/paginacao/paginate-response';
-import FormCreateUsuario from '../../../app/pages/usuarios/componentes/FormCreateUsuario.vue';
 
 export type Acao = {
     label: string;
@@ -58,7 +54,9 @@ export type Acao = {
     action: Function;
 };
 
-defineProps({
+
+
+const props = defineProps({
     dados: {
         type: PaginateResponse,
         required: true,
@@ -89,4 +87,12 @@ defineProps({
     },
 
 });
+
+const colunasTratadas: Array<QTableColumn> =
+    props.acoes
+        ? [
+            ...props.colunas,
+            { name: 'acoes', label: 'Ações', field: "", align: 'right' },
+        ]
+        : props.colunas; 
 </script>

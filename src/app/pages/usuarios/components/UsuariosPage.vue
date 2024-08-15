@@ -8,6 +8,7 @@
             </template>
 
             <template v-slot:bottom>
+                <q-btn class="bg-slate-200" label="Novo Usuário" @click="() => abrirModalCriacao()" />
                 <Pagination :find-action="getUsuarios" :total-paginas="usuarios.maxPag" />
             </template>
         </CtiTable>
@@ -15,14 +16,15 @@
 </template>
 
 <script lang="ts" setup>
-import { QTableColumn } from 'quasar';
-import CtiTable, { Acao } from '../../../lib/ui/table/CtiTable.vue';
+import { Dialog, QTableColumn } from 'quasar';
+import CtiTable, { Acao } from '../../../../lib/ui/table/CtiTable.vue';
 import { onMounted } from 'vue';
-import { useUsuarioStore } from './store/usuario.store';
+import { useUsuarioStore } from '../store/usuario.store';
 import { storeToRefs } from 'pinia';
-import SelectNivel from './components/SelectNivel.vue';
-import Pagination from '../../../lib/ui/table/Pagination.vue';
-import BuscaUsuario from './components/BuscaUsuario.vue';
+import SelectNivel from './tabela/SelectNivel.vue';
+import Pagination from '../../../../lib/ui/table/Pagination.vue';
+import BuscaUsuario from './tabela/BuscaUsuario.vue';
+import CreateUsuario from './create/CreateUsuario.vue';
 
 const usuarioStore = useUsuarioStore();
 const { deletaUsuario, atualizaUsuario, getUsuarios } = usuarioStore
@@ -30,11 +32,11 @@ const { usuarios, busca } = storeToRefs(usuarioStore);
 
 
 const colunas: QTableColumn[] = [
-    { name: 'nome', label: 'Nome', field: 'nome', align: 'center' },
-    { name: 'login', label: 'Login', field: 'login', align: 'center' },
-    { name: 'nivel', label: 'Nível', field: 'nivel', align: 'center' },
-    { name: 'situacao', label: 'Situação', field: 'situacao', align: 'center' },
-    { name: 'email', label: 'E-mail', field: 'email' },
+    { name: 'nome', label: 'Nome', field: 'nome', align: 'left' },
+    { name: 'login', label: 'Login', field: 'login', align: 'left' },
+    { name: 'nivel', label: 'Nível', field: 'nivel', align: 'left' },
+    { name: 'situacao', label: 'Situação', field: 'situacao', align: 'left' },
+    { name: 'email', label: 'E-mail', field: 'email', align: 'left' },
 ];
 
 const acoes: Acao[] = [
@@ -42,6 +44,12 @@ const acoes: Acao[] = [
     { label: 'Excluir', icon: 'delete', color: 'negative', action: deletaUsuario },
 ];
 
+
+function abrirModalCriacao() {
+    Dialog.create({
+        component: CreateUsuario
+    });
+}
 
 onMounted(async () => {
     await getUsuarios()

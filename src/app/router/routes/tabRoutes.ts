@@ -16,7 +16,8 @@ export const tabRoutes: Route[] = [
     },
     {
         path: '/usuario',
-        component: () => import('../../pages/usuarios/UsuariosPage.vue'),
+        component: () =>
+            import('../../pages/usuarios/components/UsuariosPage.vue'),
         title: 'Usuários',
         icon: 'person',
     },

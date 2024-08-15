@@ -1,5 +1,5 @@
 import { Dialog } from 'quasar';
-import CtiAlert from './CtiAlert.vue';
+import CtiAlert from './components/CtiAlert.vue';
 
 type AlertProps = {
     message: string;
