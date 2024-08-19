@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue';
 import { useUsuarioStore } from '../store/usuario.store';
-import TabelaUsuario from './tabela/TabelaUsuario.vue';
+import TabelaUsuario from './table/TabelaUsuario.vue';
 
 const usuarioStore = useUsuarioStore();
 const { getUsuarios } = usuarioStore

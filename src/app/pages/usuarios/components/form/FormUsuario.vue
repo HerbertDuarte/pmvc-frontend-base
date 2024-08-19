@@ -41,34 +41,33 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, Ref } from "vue";
 import { useUsuarioStore } from "../../store/usuario.store";
 import { storeToRefs } from "pinia";
-import { Usuario } from "../../../../../entities/usuario";
+import { Usuario, UsuarioNivel, UsuarioSituacao } from "../../../../../entities/usuario";
+import { AxiosError } from "axios";
+import { Notify } from "quasar";
+import { notifyError } from "../../../../../lib/ui/notify/notify-error";
 const usuarioStore = useUsuarioStore();
 const { usuario } = storeToRefs(usuarioStore);
 
 const formInitialState: Usuario = {
     nome: "",
     email: "",
-    nivel: "Usuário",
-    situacao: "Ativo",
+    nivel: UsuarioNivel.Usuario,
+    situacao: UsuarioSituacao.Ativo,
     login: "",
     senha: "",
 };
 
-const props = defineProps({
-    update: {
-        type: Boolean,
-    }
-});
+const props = defineProps<{
+    update?: boolean,
+    closeDialog: () => void,
+}>();
 
 const form = ref<Usuario>(formInitialState);
-
 const confirmacao_senha = ref("");
-
 const nivelAcesso = ref(["Usuário", "Administrador"]);
-
 const situacao = ref(["Ativo", "Inativo"]);
 
 
@@ -90,9 +89,7 @@ function validaLogin(val: string) {
 }
 
 function validaSenha() {
-    if (props.update) return true;
-
-    return !!form.value.senha.length;
+    return form.value.senha.length >= 6;
 }
 
 function validaConfirmacaoSenha() {
@@ -124,7 +121,7 @@ const loginRules = [
         "*Proibido o uso dos seguintes caracteres [!@#$%*()_+=-?°``''~©,.;<>:], valores numéricos ou espaços",
 ];
 
-const senhaRules = [() => validaSenha() || "*Campo obrigatório"];
+const senhaRules = [() => validaSenha() || "*Campo obrigatório. Valor mínimo de 6 caracteres"];
 
 const confirmarSenhaRules = [
     () =>
@@ -140,13 +137,29 @@ function preencheCampos(data: Usuario) {
     form.value.login = data.login;
 }
 
-function submit() {
+async function submit() {
     if (props.update) {
-        usuarioStore.atualizaUsuario(form.value)
-        return;
+        return callUpdate()
     }
+    return callCreate();
+}
+
+function callCreate() {
     usuarioStore.criarUsuario(form.value)
-    form.value = formInitialState;
+        .then(() => {
+            props.closeDialog();
+        }).catch((error) => {
+            notifyError({ error, message: "Erro ao criar usuário" });
+        });
+}
+
+function callUpdate() {
+    usuarioStore.atualizaUsuario(form.value)
+        .then(() => {
+            props.closeDialog();
+        }).catch((error) => {
+            notifyError({ error, message: "Erro ao atualizar usuário" });
+        });
 }
 
 onMounted(async () => {

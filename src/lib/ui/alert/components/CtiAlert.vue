@@ -11,7 +11,7 @@
             </div>
 
             <div class="flex items-center  justify-center pt-6 gap-2">
-                <q-btn color="primary" unelevated :label="buttonTitle ?? 'Confirmar'" @click="() => acao()" />
+                <q-btn color="primary" unelevated :label="buttonTitle ?? 'Confirmar'" @click="exec" />
                 <q-btn label="Cancelar" class="bg-slate-100 text-slate-700" v-close-popup />
             </div>
         </q-card>
@@ -19,21 +19,18 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
+import { AlertProps } from "../useAlert";
+import { notifyError } from "../../notify/notify-error";
+const dialogRef = ref<any>(null);
+const props = defineProps<AlertProps>();
 
-defineProps({
-    mensagem: {
-        type: String,
-        required: true,
-    },
-    buttonTitle: {
-        type: String,
-        required: false,
-    },
-    acao: {
-        type: Function,
-        required: true,
-    },
-
-});
+function exec() {
+    try {
+        props.action()
+    } catch (error) {
+        notifyError(error)
+    }
+    dialogRef.value.hide()
+}
 </script>

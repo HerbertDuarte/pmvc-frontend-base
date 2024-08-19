@@ -22,10 +22,13 @@ import './styles/globals.css';
 import { createPinia } from 'pinia';
 import { buildRouter } from './app/router';
 import { quasarOptions } from './config/quasar-options';
+import { useAuthStore } from './app/store/auth/authStore';
 
 const app = createApp(App);
 
 app.use(createPinia());
-app.use(buildRouter());
+const authStore = useAuthStore();
+await authStore.initSystem();
+app.use(await buildRouter());
 app.use(Quasar, quasarOptions);
 app.mount('#app');

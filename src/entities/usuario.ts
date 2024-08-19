@@ -3,7 +3,17 @@ export interface Usuario {
     nome: string;
     email: string;
     senha: string;
-    nivel: 'Administrador' | 'Usuário';
-    situacao: 'Ativo' | 'Inativo';
+    nivel: UsuarioNivel;
+    situacao: UsuarioSituacao;
     login: string;
+}
+
+export enum UsuarioNivel {
+    Administrador = 'Administrador',
+    Usuario = 'Usuario',
+}
+
+export enum UsuarioSituacao {
+    Ativo = 'Ativo',
+    Inativo = 'Inativo',
 }

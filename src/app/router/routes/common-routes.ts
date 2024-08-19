@@ -1,6 +1,6 @@
-import { Route } from './tabRoutes';
+import { Route } from './tab-routes';
 
-export const perfilRoutes: Route[] = [
+export const commonRoutes: Route[] = [
     {
         path: '/perfil',
         component: () => import('../../pages/perfil/PerfilPage.vue'),

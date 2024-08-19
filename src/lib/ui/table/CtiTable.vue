@@ -56,37 +56,14 @@ export type Acao = {
 
 
 
-const props = defineProps({
-    dados: {
-        type: PaginateResponse,
-        required: true,
-    },
-    colunas: {
-        type: Array<QTableColumn>,
-        required: true,
-    },
-    acoes: {
-        type: Array<Acao>,
-        required: false,
-    },
-    titulo: {
-        type: String,
-        required: false,
-    },
-    rowClick: {
-        type: Function,
-        required: false,
-    },
-    paginaAtual: {
-        type: Number,
-        required: false,
-    },
-    totalPaginas: {
-        type: Number,
-        required: false,
-    },
+const props = defineProps<{
+    dados: PaginateResponse<any>,
+    colunas: QTableColumn[],
+    acoes?: Acao[],
+    titulo: string,
+    rowClick?: (row: any) => void,
 
-});
+}>();
 
 const colunasTratadas: Array<QTableColumn> =
     props.acoes

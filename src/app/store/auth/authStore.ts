@@ -2,11 +2,11 @@ import { defineStore } from 'pinia';
 import { api } from '../../../boot/axios';
 import { Notify, Loading, QSpinnerBall } from 'quasar';
 import { ref } from 'vue';
-import { Usuario } from '../../../entities/usuario';
+import { Usuario, UsuarioNivel } from '../../../entities/usuario';
 import { buildRouter } from '../../router';
-import { Axios, AxiosError } from 'axios';
-
-type UserLevel = 'Administrador' | 'Usuário';
+import { AxiosError } from 'axios';
+import { notifyError } from '../../../lib/ui/notify/notify-error';
+import { notifySuccess } from '../../../lib/ui/notify/notify-success';
 
 export type LoginPayload = {
     username: string;
@@ -16,7 +16,7 @@ export type LoginPayload = {
 type LoginResponse = {
     access_token: string;
     usuarioId: string;
-    nivel: UserLevel;
+    nivel: UsuarioNivel;
 };
 
 export const useAuthStore = defineStore('auth', () => {
@@ -24,7 +24,6 @@ export const useAuthStore = defineStore('auth', () => {
     const token = ref<string | null>();
     const isAuthenticated = ref(false);
     const isAdmin = ref(false);
-    const router = buildRouter();
     const loadingProps = {
         message: 'Entrando em contato com servidor...',
         delay: 400,
@@ -44,15 +43,10 @@ export const useAuthStore = defineStore('auth', () => {
             getUser(response.data.usuarioId);
             setAccessLevel(response.data.nivel);
             if (response.data.access_token) {
-                notifyWelcome();
-            }
-            if (router) {
-                router.push('/');
-            } else {
-                console.error('Router is undefined');
+                notifySuccess({ message: 'Login efetuado com sucesso' });
             }
         } catch (error: any) {
-            notifyError(error);
+            notifyError({ error });
         }
         Loading.hide();
     }
@@ -64,16 +58,18 @@ export const useAuthStore = defineStore('auth', () => {
         window.localStorage.setItem('token', token.value);
     }
 
-    function setUser(userPayload: Usuario) {
-        user.value = userPayload;
-        setAccessLevel(userPayload.nivel);
-        window.localStorage.setItem('user_id', userPayload.id);
-        window.localStorage.setItem('name_user', userPayload.nome);
+    function setUser(usuario: Usuario) {
+        user.value = usuario;
+        setAccessLevel(usuario.nivel);
+        if (usuario.id) {
+            window.localStorage.setItem('user_id', usuario.id);
+            window.localStorage.setItem('name_user', usuario.nome);
+        }
     }
 
-    function setAccessLevel(level: UserLevel) {
-        window.localStorage.setItem('access_level', level);
-        if (level === 'Administrador') {
+    function setAccessLevel(nivel: UsuarioNivel) {
+        window.localStorage.setItem('access_level', nivel);
+        if (nivel === UsuarioNivel.Administrador) {
             isAdmin.value = true;
         }
     }
@@ -117,7 +113,7 @@ export const useAuthStore = defineStore('auth', () => {
         const { data } = await api.get<Usuario>(`usuarios/${id}`);
         setAccessLevel(data.nivel);
         setUser(data);
-        return data.nivel;
+        return data;
     }
 
     function logout() {
@@ -125,37 +121,6 @@ export const useAuthStore = defineStore('auth', () => {
         removeUser();
         removeToken();
         removeAccessLevel();
-    }
-
-    function notifyWelcome() {
-        Notify.create({
-            color: 'green-10',
-            icon: 'done_all',
-            position: 'top',
-            timeout: 2000,
-            message: 'Bem vindo de volta',
-        });
-    }
-
-    function notifyError(error: any) {
-        if (error instanceof AxiosError) {
-            console.log(error);
-            if (error.response?.status === 401) {
-                Notify.create({
-                    color: 'negative',
-                    position: 'top',
-                    timeout: 2000,
-                    message: 'Usuário ou senha inválidos',
-                });
-                return;
-            }
-            Notify.create({
-                color: 'negative',
-                position: 'top',
-                timeout: 2000,
-                message: error?.response?.data?.message ?? error.message,
-            });
-        }
     }
 
     return {

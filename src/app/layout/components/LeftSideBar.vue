@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { tabRoutes } from '../../router/routes/tabRoutes';
+import { getTabs, Route, tabRoutes } from '../../router/routes/tab-routes';
 import { useAuthStore } from '../../store/auth/authStore';
 import { useSideBarStore } from '../states/side-bar.state';
+import { UsuarioNivel } from '../../../entities/usuario';
 const sideBarStore = useSideBarStore();
 const authStore = useAuthStore();
 
 const { user } = storeToRefs(authStore);
+function canShow(tab: Route) {
+    return !(tab.meta?.requiredAdminLevel && user.value?.nivel !== UsuarioNivel.Administrador)
+}
+
 </script>
 
 <template>
@@ -24,15 +29,17 @@ const { user } = storeToRefs(authStore);
             </div>
         </q-img>
         <q-list class="p-4 text-slate-600">
-            <q-item class="rounded" clickable v-for="tab in tabRoutes" :key="tab.path" :to="tab.path" exact>
-                <q-item-section avatar>
-                    <q-icon :name="tab.icon" />
-                </q-item-section>
-                <q-item-section>
-                    <q-item-label class="text-sm font-medium">{{
-                        tab.title
+            <q-item v-for="tab in tabRoutes" :key="tab.path" :to="tab.path" clickable exact class="rounded">
+                <div v-if="canShow(tab)" class="flex items-center justify-start">
+                    <q-item-section avatar>
+                        <q-icon :name="tab.icon" />
+                    </q-item-section>
+                    <q-item-section>
+                        <q-item-label class="text-sm font-medium">{{
+                            tab.title
                         }}</q-item-label>
-                </q-item-section>
+                    </q-item-section>
+                </div>
             </q-item>
         </q-list>
     </q-drawer>

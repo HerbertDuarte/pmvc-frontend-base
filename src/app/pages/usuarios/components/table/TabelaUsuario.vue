@@ -1,14 +1,13 @@
 <template>
-    <CtiTable class="max-w-[1366px]" titulo="Usuários" :dados="usuarios" :colunas="colunas" :acoes="acoes"
-        :busca="busca">
+    <CtiTable class="max-w-[1366px]" titulo="Usuários" :dados="usuarios" :colunas="colunas" :acoes="acoes">
         <template v-slot:header>
             <SelectNivel />
-            <BuscaUsuario :find-action="getUsuarios" :busca="busca" class="flex-1" />
+            <BuscaUsuario class="flex-1" />
         </template>
 
         <template v-slot:bottom>
             <q-btn class="bg-slate-200" label="Novo Usuário" @click="() => abrirModalCriacao()" />
-            <Pagination :find-action="getUsuarios" :total-paginas="usuarios.maxPag" />
+            <Pagination :page-props="pageProps" :find-action="getUsuarios" :total-paginas="usuarios.maxPag" />
         </template>
     </CtiTable>
 </template>
@@ -27,8 +26,8 @@ import UpdateUsuario from '../form/UpdateUsuario.vue';
 
 const usuarioStore = useUsuarioStore();
 const { getUsuarios } = usuarioStore
-const { usuarios, busca } = storeToRefs(usuarioStore);
-
+const pageProps = usuarioStore.pageProps();
+const { usuarios } = storeToRefs(usuarioStore);
 
 const colunas: QTableColumn[] = [
     { name: 'nome', label: 'Nome', field: 'nome', align: 'left' },

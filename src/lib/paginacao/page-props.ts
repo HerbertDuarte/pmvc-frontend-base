@@ -1,19 +1,19 @@
 import { Ref, ref } from 'vue';
-export interface PageProps {
-    itensPorPagina: Ref<number>;
-    pagina: Ref<number>;
-}
 
-export interface FullPageProps extends PageProps {
-    setItensPorPagina: (value: number) => void;
-    setPagina: (value: number) => void;
+export class PageProps {
+    itensPorPagina!: Ref<number>;
+    pagina!: Ref<number>;
+    setItensPorPagina!: (value: number) => void;
+    setPagina!: (value: number) => void;
+    next!: () => number;
+    prev!: () => number;
 }
 
 type PageDefaults = {
     itensPorPagina: number;
 };
-export const usePageProps = (defaults?: PageDefaults): FullPageProps => {
-    const itensPorPagina = ref(defaults?.itensPorPagina ?? 5);
+export const usePageProps = (defaults?: PageDefaults): (() => PageProps) => {
+    const itensPorPagina = ref<number>(defaults?.itensPorPagina ?? 5);
     const pagina = ref(1);
 
     function setItensPorPagina(value: number) {
@@ -24,10 +24,26 @@ export const usePageProps = (defaults?: PageDefaults): FullPageProps => {
         pagina.value = value;
     }
 
-    return {
-        itensPorPagina,
-        pagina,
-        setItensPorPagina,
-        setPagina,
-    };
+    function next() {
+        pagina.value++;
+        return pagina.value;
+    }
+
+    function prev() {
+        pagina.value--;
+        return pagina.value;
+    }
+
+    function getPageProps() {
+        return {
+            itensPorPagina,
+            pagina,
+            setItensPorPagina,
+            setPagina,
+            next,
+            prev,
+        };
+    }
+
+    return getPageProps;
 };

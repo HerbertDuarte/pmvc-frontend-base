@@ -12,6 +12,5 @@ import { useUsuarioStore } from '../../store/usuario.store';
 
 const usuarioStore = useUsuarioStore();
 const { getUsuarios } = usuarioStore;
-const { busca } = storeToRefs(usuarioStore);
-
+const { usuarios, busca } = storeToRefs(usuarioStore);
 </script>

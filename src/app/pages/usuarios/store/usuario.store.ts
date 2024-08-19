@@ -8,12 +8,14 @@ import { PaginateResponse } from '../../../../lib/paginacao/paginate-response';
 import { Queries } from '../../../../lib/paginacao/queries';
 import { Notify } from 'quasar';
 import { nivelOptions } from '../options/select-nivel-options';
+import { AxiosError } from 'axios';
 
 type Usuarios = PaginateResponse<Usuario>;
 
 export const useUsuarioStore = defineStore('usuario', () => {
     const usuarios = ref<Usuarios>({ data: [], maxPag: 0 });
     const usuario = ref<Usuario | null>(null);
+
     const busca = ref('');
     const selectNivel = ref(nivelOptions[0]);
     const pageProps = usePageProps({ itensPorPagina: 10 });
@@ -46,10 +48,10 @@ export const useUsuarioStore = defineStore('usuario', () => {
         });
     }
 
-    function criarUsuario(form: Usuario) {
-        api.post('/usuarios', form).then(async () => {
-            await getUsuarios();
-        });
+    async function criarUsuario(form: Usuario) {
+        await api.post('/usuarios', form);
+        await getUsuarios();
+
         Notify.create({
             message: 'Usuário salvo com sucesso',
             type: 'positive',
@@ -57,7 +59,6 @@ export const useUsuarioStore = defineStore('usuario', () => {
     }
 
     async function atualizaUsuario(data: Usuario) {
-        console.log(data);
         await api.put('/usuarios/' + usuario.value?.id, data);
         await getUsuarios();
         Notify.create({
@@ -78,5 +79,6 @@ export const useUsuarioStore = defineStore('usuario', () => {
         atualizaUsuario,
         busca,
         selectNivel,
+        pageProps,
     };
 });
