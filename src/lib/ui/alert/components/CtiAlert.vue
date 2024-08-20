@@ -29,7 +29,7 @@ function exec() {
     try {
         props.action()
     } catch (error) {
-        notifyError(error)
+        notifyError({ error })
     }
     dialogRef.value.hide()
 }

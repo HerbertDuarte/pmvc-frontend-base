@@ -4,7 +4,7 @@ import { getRoutes } from './routes';
 import { UsuarioNivel } from '../../entities/usuario';
 import { notifyError } from '../../lib/ui/notify/notify-error';
 
-export const buildRouter = async () => {
+export const buildRouter = () => {
     const authStore = useAuthStore();
     const router = createRouter({
         scrollBehavior: () => ({ left: 0, top: 0 }),
