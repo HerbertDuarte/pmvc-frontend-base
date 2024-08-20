@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { App, createApp } from 'vue';
 import { Quasar } from 'quasar';
 import '@quasar/extras/roboto-font-latin-ext/roboto-font-latin-ext.css';
 import '@quasar/extras/material-icons/material-icons.css';
@@ -17,15 +17,22 @@ import '@quasar/extras/themify/themify.css';
 import '@quasar/extras/line-awesome/line-awesome.css';
 import '@quasar/extras/bootstrap-icons/bootstrap-icons.css';
 import 'quasar/src/css/index.sass';
-import App from './app/App.vue';
+import AppComponent from './app/App.vue';
 import './styles/globals.css';
 import { createPinia } from 'pinia';
 import { buildRouter } from './app/router';
 import { quasarOptions } from './config/quasar-options';
+import { useAuthStore } from './app/store/auth/authStore';
 
-const app = createApp(App);
+const app = createApp(AppComponent);
 
-app.use(createPinia());
-app.use(buildRouter());
-app.use(Quasar, quasarOptions);
-app.mount('#app');
+async function bootstrap(app: App<Element>) {
+    app.use(createPinia());
+    const authStore = useAuthStore();
+    await authStore.initSystem();
+    app.use(buildRouter());
+    app.use(Quasar, quasarOptions);
+    app.mount('#app');
+}
+
+bootstrap(app);

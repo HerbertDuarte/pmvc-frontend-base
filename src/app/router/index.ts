@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../store/auth/authStore';
-import { routes } from './routes';
+import { getRoutes } from './routes';
+import { UsuarioNivel } from '../../entities/usuario';
+import { notifyError } from '../../lib/ui/notify/notify-error';
 
 export const buildRouter = () => {
+    const authStore = useAuthStore();
     const router = createRouter({
         scrollBehavior: () => ({ left: 0, top: 0 }),
-        routes,
+        routes: getRoutes(),
         history: createWebHistory('/'),
     });
-
-    const authStore = useAuthStore();
 
     router.beforeEach(async (to, _from, next) => {
         try {
@@ -25,18 +26,21 @@ export const buildRouter = () => {
 
                 if (
                     to.meta.requiredAdminLevel &&
-                    accessLevel !== 'Administrador'
+                    accessLevel !== UsuarioNivel.Administrador
                     // || ((to?.meta.requiredOutroNivelDeAcesso) && accessLevel !== "OutroNivelDeAcesso")
                 ) {
-                    next({
-                        name: 'erro',
+                    authStore.logout();
+                    notifyError({
+                        message:
+                            'Você não tem permissão para acessar esta página',
                     });
                     return;
                 }
             }
             next();
         } catch (error) {
-            next({ name: 'login' });
+            authStore.logout();
+            notifyError({ error });
         }
     });
 
